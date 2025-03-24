@@ -6,13 +6,13 @@ import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
-
 import java.security.Key;
 import java.util.Date;
 
 @Component
 public class JwtTokenProvider {
     private final Key chaveSecreta;
+
     @Value("${jwt.expiration}")
     private long tempoExpiracao;
 
@@ -26,6 +26,7 @@ public class JwtTokenProvider {
     public String gerarToken(String email) {
         Date agora = new Date();
         Date expiracao = new Date(agora.getTime() + tempoExpiracao);
+
         return Jwts.builder()
                 .setSubject(email)
                 .setIssuedAt(agora)
@@ -37,7 +38,7 @@ public class JwtTokenProvider {
     // Extrair email do token
     public String obterEmailDoToken(String token) {
         return Jwts.parser()
-                .verifyWith((javax.crypto.SecretKey) chaveSecreta)
+                .verifyWith((javax.crypto.SecretKey)chaveSecreta)
                 .build()
                 .parseSignedClaims(token)
                 .getPayload()
@@ -48,7 +49,7 @@ public class JwtTokenProvider {
     public boolean validarToken(String token) {
         try {
             Jwts.parser()
-                    .verifyWith((javax.crypto.SecretKey) chaveSecreta)
+                    .verifyWith((javax.crypto.SecretKey)chaveSecreta)
                     .build()
                     .parseSignedClaims(token);
             return true;
