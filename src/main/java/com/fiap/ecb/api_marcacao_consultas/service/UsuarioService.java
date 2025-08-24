@@ -4,6 +4,7 @@ import com.fiap.ecb.api_marcacao_consultas.model.Usuario;
 import com.fiap.ecb.api_marcacao_consultas.repository.UsuarioRepository;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+
 import java.util.List;
 import java.util.Optional;
 
@@ -117,5 +118,19 @@ public class UsuarioService {
         }
 
         return resultado.toString();
+    }
+
+    /**
+     * Altera a senha de um usuário específico (apenas admin)
+     */
+    public Usuario alterarSenha(Long usuarioId, String novaSenha) {
+        Usuario usuario = usuarioRepository.findById(usuarioId)
+                .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
+
+        // Criptografa a nova senha
+        String senhaCriptografada = passwordEncoder.encode(novaSenha);
+        usuario.setSenha(senhaCriptografada);
+
+        return usuarioRepository.save(usuario);
     }
 }
